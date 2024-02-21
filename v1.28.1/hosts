@@ -1,0 +1,37 @@
+# k8s Master节点IP及节点名称，可自定义
+[kube_master]
+# 默认Master节点也部署Node组件
+192.168.133.131 node_name=k8s-master-01
+192.168.133.132 node_name=k8s-master-02
+192.168.133.133 node_name=k8s-master-03
+
+# k8s Worker节点IP及节点名称，可自定义
+[kube_node]
+192.168.133.134 node_name=k8s-node-01
+192.168.133.135 node_name=k8s-node-02
+192.168.133.136 node_name=k8s-node-03
+
+# etcd节点IP及节点名称
+[etcd]
+192.168.133.131 etcd_name=etcd-1
+192.168.133.132 etcd_name=etcd-2
+192.168.133.133 etcd_name=etcd-3
+
+# 负载均衡节点IP
+[lb]
+192.168.133.131 lb_name=lb-master 
+192.168.133.132 lb_name=lb-backup
+
+# 包含k8s Master和Worker节点
+[k8s:children]
+kube_master
+kube_node
+
+# 运维主机IP，可与ansible为同一台主机
+[tools]
+# 默认部署Nginx服务，作为K8S统一的资源配置清单访问入口
+192.168.133.130
+
+# k8s集群中添加Worker节点时候配置
+[kube_newnode]
+#192.168.133.137 node_name=k8s-node-04

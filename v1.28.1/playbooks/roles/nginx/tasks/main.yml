@@ -1,0 +1,23 @@
+---
+- name: 创建临时目录
+  file: dest={{ tmp_dir }} state=directory
+
+- name: 创建k8s yaml目录
+  file: dest={{ k8s_yaml_dir }} state=directory
+
+- name: 拷贝nginx安装包
+  copy: src={{ software_dir }}/nginx-1.18.0-1.el7.ngx.x86_64.rpm dest={{ tmp_dir }}/nginx-1.18.0-1.el7.ngx.x86_64.rpm
+
+- name: 安装nginx
+  shell: rpm -ivh {{ tmp_dir }}/nginx-1.18.0-1.el7.ngx.x86_64.rpm
+  register: result
+  failed_when: "'已经安装' in result['stdout']"
+
+- name: 拷贝nginx配置文件
+  template: src=k8s-yaml.my.com.conf.j2 dest=/etc/nginx/conf.d/k8s-yaml.my.com.conf
+
+- name: 启动服务
+  ignore_errors: yes
+  systemd: name={{ item }} state=restarted enabled=yes daemon_reload=yes
+  with_items:
+    - nginx

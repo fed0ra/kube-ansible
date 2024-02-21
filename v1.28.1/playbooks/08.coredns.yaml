@@ -1,0 +1,6 @@
+# to install CoreDNS plugin
+- name: 部署CoreDNS插件
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-coredns

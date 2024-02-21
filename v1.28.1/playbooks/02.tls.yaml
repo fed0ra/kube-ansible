@@ -1,0 +1,6 @@
+# to create CA
+- name: 生成自签证书 
+  gather_facts: false
+  hosts: localhost 
+  roles:
+    - tls

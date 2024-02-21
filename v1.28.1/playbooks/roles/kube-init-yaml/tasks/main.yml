@@ -1,0 +1,4 @@
+---
+- include: copy-rbac-yaml.yml
+- include: copy-coredns-yaml.yml
+- include: copy-calico-yaml.yml

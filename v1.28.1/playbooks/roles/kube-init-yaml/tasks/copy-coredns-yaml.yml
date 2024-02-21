@@ -1,0 +1,10 @@
+---
+- name: 创建CoreDNS k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - coredns
+
+- name: 拷贝CoreDNS YAML文件
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/coredns
+  with_items:
+    - coredns.yaml

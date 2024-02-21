@@ -1,0 +1,34 @@
+- name: 创建Dashboard k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - kubernetes-dashboard
+
+- name: 拷贝Dashboard YAML文件
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/kubernetes-dashboard
+  with_fileglob:
+    - "kubernetes-dashboard.yaml"
+    - "kubernetes-dashboard-adminuser.yaml"
+
+- name: 创建临时目录
+  file: dest={{ tmp_dir }}/kubernetes-dashboard state=directory
+
+- name: 分发Kubernetes Dashboard预准备镜像（需要花费一些时间...）
+  copy: src={{ item }} dest={{ tmp_dir }}/kubernetes-dashboard
+  with_items:
+    - "{{ software_dir }}/{{ kubernetes_dashboard_image }}"
+    - "{{ software_dir }}/{{ metrics_scraper_image }}"
+
+- name: 导入Kubernetes Dashboard镜像（需要花费一些时间...）
+  shell: cd {{ tmp_dir }}/kubernetes-dashboard && \
+         for images in $(ls *.tar);do ctr -n k8s.io i import $images;done
+
+- name: 部署Kubernetes Dashboard
+  #ignore_errors: yes
+  shell: |
+         kubectl create ns {{ kubernetes_dashboard_namespace }}
+         kubectl apply -f http://{{ nginx_ip }}/{{ kubernetes_dashboard_url }}/kubernetes-dashboard.yaml -n {{ kubernetes_dashboard_namespace }}
+
+- name: 查看Pod状态
+  shell: kubectl get all -o wide -n {{ kubernetes_dashboard_namespace }}
+  register: getall
+- debug: var=getall.stdout_lines

@@ -1,0 +1,10 @@
+server {
+    listen       80;
+    server_name  {{ inventory_hostname }};
+
+    location / {
+        autoindex on;
+        default_type text/plain;
+        root /data/k8s-yaml;
+    }
+}

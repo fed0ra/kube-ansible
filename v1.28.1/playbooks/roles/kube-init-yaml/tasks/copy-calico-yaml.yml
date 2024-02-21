@@ -1,0 +1,10 @@
+---
+- name: 创建Calico k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - calico
+
+- name: 拷贝Calico YAML文件
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/calico
+  with_items:
+    - calico.yaml

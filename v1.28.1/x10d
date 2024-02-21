@@ -1,0 +1,90 @@
+#!/bin/bash
+# Create & manage k8s clusters
+
+function usage(){
+  echo -e "\033[33mUsage:\033[0m ./x10d <step>"
+  cat <<EOF
+
+available steps:
+    01  sysinit            system settings 
+    02  tls                to generate certificate
+    03  container-runtime  to setup the container runtime(docker or containerd)
+    04  etcd               to setup the etcd cluster
+    05  kube-master        to setup the master nodes
+    06  kube-node          to setup the worker nodes
+    07  network            to setup the network plugin
+    08  coredns            to setup the coredns plugin
+    09  ha                 to install external loadbalance and high availability for k8s
+    10  nginx              to install nginx for k8s yaml and others
+    30  addnode            to add a work node to the k8s cluster
+    80  all-single         to run 01~08 and 10 all at once
+    81  all-ha             to run 01~10 all at once 
+
+examples: ./x10d 01  (or ./x10d sysinit)
+          ./x10d 03  (or ./x10d container-runtime)
+          ./x10d all-ha  (or ./x10d 81)
+
+EOF
+}
+
+
+function setup() {
+
+    case "$1" in
+      (01|sysinit)
+          PLAY_BOOK="01.sysinit.yaml"
+          ;;
+      (02|tls)
+          PLAY_BOOK="02.tls.yaml"
+          ;;
+      (03|container-runtime)
+          PLAY_BOOK="03.runtime.yaml"
+          ;;
+      (04|etcd)
+          PLAY_BOOK="04.etcd.yaml"
+          ;;
+      (05|kube-master)
+          PLAY_BOOK="05.kube-master.yaml"
+          ;;
+      (06|kube-node)
+          PLAY_BOOK="06.kube-node.yaml"
+          ;;
+      (07|network)
+          PLAY_BOOK="07.network.yaml"
+          ;;
+      (08|coredns)
+          PLAY_BOOK="08.coredns.yaml"
+          ;;
+      (09|ha)
+          PLAY_BOOK="09.ha.yaml"
+          ;;
+      (10|nginx)
+          PLAY_BOOK="10.nginx.yaml"
+          ;;
+      (30|addnode)
+          PLAY_BOOK="30.addnode.yml"
+          ;;
+      (80|all-single)
+          PLAY_BOOK="80.all-single.yml"
+          ;;
+      (81|all-ha)
+          PLAY_BOOK="81.all-ha.yml"
+          ;;
+      (*)
+    	      usage
+          exit 1 
+          ;;
+    esac
+
+    COMMAND="ansible-playbook -i hosts playbooks/$PLAY_BOOK"
+    echo "$COMMAND"
+    ${COMMAND} || return 1
+}
+
+function main() {
+
+[ "$#" -eq 1 ] || { usage >&2; exit 2; }
+setup $1
+
+}
+main "$@"

@@ -1,0 +1,39 @@
+---
+- name: 创建证书目录
+  file: dest={{ ssl_dir }}/{{ item }} state=directory
+  with_items:
+    - etcd
+    - k8s
+
+- name: 安装cfssl工具
+  unarchive: src={{ software_dir }}/cfssl.tar.gz dest=/usr/bin/ mode=u+x
+
+- name: 准备etcd证书请求文件
+  template: src=etcd/{{ item }} dest={{ ssl_dir }}/etcd/{{ item.split('.')[:-1]|join('.') }}
+  with_items:
+    - ca-config.json.j2
+    - ca-csr.json.j2
+    - server-csr.json.j2
+
+- name: 准备生成etcd证书脚本
+  copy: src=generate_etcd_cert.sh dest={{ ssl_dir }}/etcd mode=u+x
+
+- name: 生成etcd证书
+  shell: cd {{ ssl_dir }}/etcd && /bin/bash generate_etcd_cert.sh
+
+- name: 准备k8s证书请求文件
+  template: src=k8s/{{ item }} dest={{ ssl_dir }}/k8s/{{ item.split('.')[:-1]|join('.') }}
+  with_items:
+    - ca-config.json.j2  
+    - ca-csr.json.j2  
+    - server-csr.json.j2
+    - kube-proxy-csr.json.j2  
+    - kube-controller-manager-csr.json.j2
+    - kube-scheduler-csr.json.j2
+    - admin-csr.json.j2
+
+- name: 准备生成k8s证书脚本
+  copy: src=generate_k8s_cert.sh dest={{ ssl_dir }}/k8s mode=u+x
+
+- name: 生成k8s证书 
+  shell: cd {{ ssl_dir }}/k8s && /bin/bash generate_k8s_cert.sh

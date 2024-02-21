@@ -1,0 +1,11 @@
+- name: 运维主机-部署nginx作为K8S统一的资源配置清单访问入口
+  gather_facts: false
+  hosts: tools
+  roles:
+    - nginx
+
+- name: 运维主机-拷贝K8S初始化相关YAML
+  gather_facts: false
+  hosts: tools
+  roles:
+    - kube-init-yaml

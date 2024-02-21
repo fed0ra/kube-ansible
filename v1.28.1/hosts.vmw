@@ -1,0 +1,24 @@
+[kube_master]
+# 默认Naster节点也部署Node组件
+192.168.133.131 node_name=k8s-master-01
+192.168.133.132 node_name=k8s-master-02
+
+[kube_node]
+192.168.133.133 node_name=k8s-node-01
+
+[etcd]
+192.168.133.131 etcd_name=etcd-1
+
+[lb]
+192.168.133.131 lb_name=lb-master 
+192.168.133.132 lb_name=lb-backup
+
+[k8s:children]
+kube_master
+kube_node
+
+[tools]
+192.168.133.130
+
+[kube_newnode]
+#192.168.133.137 node_name=k8s-node-04

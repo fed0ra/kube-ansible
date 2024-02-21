@@ -1,0 +1,23 @@
+---
+- name: 创建Calico k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - calico
+
+- name: 拷贝Calico YAML文件到Master
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/calico
+  with_fileglob:
+    - "*.yaml"
+  #with_items:
+  #  - calico.yaml
+
+- name: 部署Calico
+  ignore_errors: yes
+  shell: |
+         cd {{ k8s_yaml_dir }}/calico
+         for yaml in $(ls *.yaml);do kubectl apply -f $yaml;done
+
+- name: 查看Pod状态
+  shell: kubectl get all --all-namespaces
+  register: getall
+- debug: var=getall.stdout_lines

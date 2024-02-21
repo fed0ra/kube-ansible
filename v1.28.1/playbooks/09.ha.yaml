@@ -1,0 +1,6 @@
+# install nginx and keepalibed
+- name: 部署负载均衡及高可用
+  gather_facts: false
+  hosts: lb
+  roles:
+    - ha

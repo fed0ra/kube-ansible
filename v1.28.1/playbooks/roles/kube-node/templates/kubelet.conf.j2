@@ -1,0 +1,9 @@
+KUBELET_OPTS="--v=4 \
+--hostname-override={{ node_name }} \
+--kubeconfig={{ k8s_link_dir }}/cfg/kubelet.kubeconfig \
+--bootstrap-kubeconfig={{ k8s_link_dir }}/cfg/bootstrap.kubeconfig \
+--config={{ k8s_link_dir }}/cfg/kubelet-config.yml \
+--cert-dir={{ k8s_link_dir }}/ssl \
+--container-runtime-endpoint=unix:///run/containerd/containerd.sock \
+--cgroup-driver=systemd \
+--node-labels=node.kubernetes.io/node={{ node_name }}"

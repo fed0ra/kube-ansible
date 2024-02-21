@@ -1,0 +1,6 @@
+# to set up 'kube_node' nodes
+- name: 部署K8S Worker节点
+  gather_facts: false
+  hosts: k8s 
+  roles:
+    - kube-node

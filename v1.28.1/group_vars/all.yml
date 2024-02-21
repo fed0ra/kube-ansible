@@ -1,0 +1,52 @@
+# 安装目录 
+software_dir: '/opt/src/kube-ansible/v1.28.1/kube-package'       # k8s离线安装包路径，如有变动需修改
+k8s_work_dir: '/opt/kubernetes-v1.28.1' # k8s安装目录，可自定义
+k8s_link_dir: '/opt/kubernetes'         # k8s软连接目录，不可修改
+etcd_work_dir: '/opt/etcd-v3.5.9'       # etcd安装目录，可自定义
+etcd_link_dir: '/opt/etcd'              # etcd软连接目录，不可修改
+ssl_dir: '/opt/ssl'                     # 本地生成证书路径，可自定义
+tmp_dir: '/opt/src/tmp/kubernetes'      # 安装k8s所需安装包临时目录，可自定义
+k8s_yaml_dir: '/data/k8s-yaml'          # k8s yaml文件存放目录，可自定义
+
+
+# 集群网络
+service_cidr: '10.0.0.0/24'     # service网络，可自定义
+cluster_dns: '10.0.0.2'         # 与roles/k8s_coredns/files/coredns.yaml中IP一致，并且是service_cidr中的IP
+pod_cidr: '10.244.0.0/16'       # 与roles/k8s_calico/files/calico.yaml中网段一致
+service_nodeport_range: '30000-32767'
+cluster_domain: 'cluster.local'
+
+nic: 'ens33'            # 修改为实际内网网卡名，如eth0
+vip: '192.168.133.250'  # 高可用keepalived的虚拟IP，可自定义
+
+# 自签证书可信任IP列表，为方便扩展，可添加多个预留IP
+cert_hosts:
+  # 包含所有LB、VIP、Master IP和service_cidr的第一个IP
+  # 生成证书中，包含LB负载均衡地址、VIP、和一个域名，这样就可以通过域名绑定IP，再加上config文件方式访问集群了
+  k8s:
+    - 10.0.0.1          # service_cidr的第一个IP
+    - 192.168.133.250   # VIP
+    - 192.168.133.131   # LB
+    - 192.168.133.132   # LB
+    - 192.168.133.133   
+    - 192.168.133.134
+    - 192.168.133.135
+    - 192.168.133.136
+    - 192.168.133.137
+    - 192.168.133.138
+    - 192.168.133.139
+    - 192.168.133.141
+    - 192.168.133.142
+    - 192.168.133.143
+    - 192.168.133.144
+    - 192.168.133.145
+    - 192.168.133.146
+    - 192.168.133.147
+    - 192.168.133.148
+    - 192.168.133.149
+    - kubeapi.zstp.com  # 域名 
+  # 包含所有etcd节点IP
+  etcd:
+    - 192.168.133.131
+    - 192.168.133.132
+    - 192.168.133.133

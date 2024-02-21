@@ -1,0 +1,6 @@
+# to install network plugin, only one can be choosen
+- name: 部署网络插件插件
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-calico

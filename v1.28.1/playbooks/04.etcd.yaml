@@ -1,0 +1,6 @@
+# to install etcd cluster
+- name: 部署ETCD集群
+  gather_facts: false
+  hosts: etcd
+  roles:
+    -  etcd

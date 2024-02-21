@@ -1,0 +1,74 @@
+# system initialization tasks for all nodes
+- name: 系统初始化
+  gather_facts: false
+  hosts: all 
+  roles:
+    - sysinit
+
+# to create CA
+- name: 生成自签证书 
+  gather_facts: false
+  hosts: localhost 
+  roles:
+    - tls
+
+# to install a container runtime
+- name: 部署容器运行时
+  gather_facts: false
+  hosts: k8s 
+  roles:
+    - containerd
+
+# to install etcd cluster
+- name: 部署ETCD集群
+  gather_facts: false
+  hosts: etcd
+  roles:
+    -  etcd
+
+# to set up 'kube_master' nodes
+- name: 部署K8S Master节点
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-master
+
+# install nginx and keepalibed
+- name: 部署负载均衡及高可用
+  gather_facts: false
+  hosts: lb
+  roles:
+    - ha
+
+# to set up 'kube_node' nodes
+- name: 部署K8S Worker节点
+  gather_facts: false
+  hosts: k8s 
+  roles:
+    - kube-node
+
+# to install network plugin, only one can be choosen
+- name: 部署网络插件插件
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-calico
+
+# to install CoreDNS plugin
+- name: 部署CoreDNS插件
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-coredns
+
+- name: 运维主机-部署nginx作为K8S统一的资源配置清单访问入口
+  gather_facts: false
+  hosts: tools
+  roles:
+    - nginx
+
+- name: 运维主机-拷贝K8S初始化相关YAML
+  gather_facts: false
+  hosts: tools
+  roles:
+    - kube-init-yaml

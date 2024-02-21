@@ -1,0 +1,11 @@
+---
+- name: 创建RBAC k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - rbac
+
+- name: 拷贝RBAC YAML文件
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/rbac
+  with_items:
+    - kubelet-bootstrap-rbac.yaml
+    - apiserver-to-kubelet-rbac.yaml

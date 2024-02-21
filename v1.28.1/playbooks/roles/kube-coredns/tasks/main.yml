@@ -1,0 +1,23 @@
+---
+- name: 创建CoreDNS k8s YAML目录
+  file: dest={{ k8s_yaml_dir }}/{{ item }} state=directory
+  with_items:
+    - coredns
+
+- name: 拷贝CoreDNS YAML文件到Master
+  copy: src={{ item }} dest={{ k8s_yaml_dir }}/coredns
+  with_fileglob:
+    - "*.yaml"
+  #with_items:
+  #  - coredns.yaml
+
+- name: 部署CoreDNS
+  ignore_errors: yes
+  shell: |
+         cd {{ k8s_yaml_dir }}/coredns
+         for yaml in $(ls *.yaml);do kubectl apply -f $yaml;done
+
+- name: 查看Pod状态
+  shell: kubectl get all --all-namespaces
+  register: getall
+- debug: var=getall.stdout_lines

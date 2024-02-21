@@ -1,0 +1,6 @@
+# to set up 'kube_master' nodes
+- name: 部署K8S Master节点
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-master

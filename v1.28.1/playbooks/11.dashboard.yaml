@@ -1,0 +1,18 @@
+# to install Kubernetes Dashboard plugin
+- name: 运维主机-拷贝Kubernetes Dashboard相关YAML
+  gather_facts: false
+  hosts: tools
+  roles:
+    - kube-dashboard
+
+- name: 开始分发Kubernetes Dashboard镜像
+  gather_facts: false
+  hosts: kube_node
+  roles:
+    - kube-dashboard
+
+- name: 开始部署Kubernetes Dashboard
+  gather_facts: false
+  hosts: kube_master
+  roles:
+    - kube-dashboard

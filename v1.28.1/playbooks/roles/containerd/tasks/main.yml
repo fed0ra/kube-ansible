@@ -1,0 +1,32 @@
+---
+- name: 创建临时目录
+  file: dest={{ tmp_dir }} state=directory
+
+- name: 分发依赖包
+  copy: src={{ software_dir }}/libseccomp-2.5.1-1.el8.x86_64.rpm dest={{ tmp_dir }}/libseccomp-2.5.1-1.el8.x86_64.rpm
+
+- name: 安装依赖
+  shell: rpm -Uvh {{ tmp_dir }}/libseccomp-2.5.1-1.el8.x86_64.rpm
+#  args:
+#    chdir: {{ tmp_dir }}
+  register: result
+  failed_when: "'已经安装' in result['stdout']"
+
+- name: 分发并解压Containerd二进制包
+  unarchive: src={{ item }} dest=/
+  with_fileglob:
+    - "{{ software_dir }}/cri-containerd-cni-1.7.2-linux-amd64.tar.gz"
+
+- name: 创建Containerd配置文件目录
+  file: dest=/etc/containerd state=directory
+
+- name: 分发Containerd配置文件
+  copy: src=config.toml dest=/etc/containerd
+
+- name: 启动Containerd
+  systemd: name=containerd state=restarted enabled=yes daemon_reload=yes
+
+- name: 查看状态
+  shell: systemctl status containerd.service
+  register: containerd
+- debug: var=containerd.stdout_lines

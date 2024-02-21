@@ -1,0 +1,6 @@
+# to install a container runtime
+- name: 部署容器运行时
+  gather_facts: false
+  hosts: k8s 
+  roles:
+    - containerd
